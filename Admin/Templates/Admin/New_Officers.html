@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellpadding="10">
+        <tr>
+            <td>#</td>
+            <td>Name</td>
+            <td>Contact</td>
+            <td>Email</td>
+            <td>Address</td>
+            <td>Date Of Birth</td>
+            <td>Photo</td>
+            <td>Proof</td>
+            <td>Gender</td>
+            <td>Desgination</td>
+            <td>Department</td>
+            <td>State</td>
+            <td>District</td>
+            <td>Place</td>
+            <td>Action</td>
+        </tr>
+        {% for i in officer %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.officer_name}}</td>
+            <td>{{i.officer_contact}}</td>
+            <td>{{i.officer_email}}</td>
+            <td>{{i.officer_address}}</td>
+            <td>{{i.officer_dob}}</td>
+            <td><a href="{{i.officer_photo.url}}"><img src="{{i.officer_photo.url}}" width="80" height="80" alt=""></a></td>
+            <td><a href="{{i.officer_proof.url}}"><img src="{{i.officer_proof.url}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.officer_gender}}</td>
+            <td>{{i.designation.designation_name}}</td>
+            <td>{{i.department.department_name}}</td>
+            <td>{{i.place.district.state.state_name}}</td>
+            <td>{{i.place.district.district_name}}</td>
+            <td>{{i.place.place_name}}</td>
+            <td><a href="{% url 'Admin:verifyofficer' i.id 1 %}">Approve</a> <a href="{% url 'Admin:verifyofficer' i.id 2 %}">Reject</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

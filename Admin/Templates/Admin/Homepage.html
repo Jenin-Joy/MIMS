@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="{% url 'Admin:approvedofficer' %}">Approved Officer</a>
+    <br>
+    <a href="{% url 'Admin:rejectedofficer' %}">Rejected Officer</a>
+    <br>
+    <a href="{% url 'Admin:newofficer' %}">New Officer</a>
+    <br>
+    <a href="{% url 'Admin:department' %}">Department</a>
+    <br>
+    <a href="{% url 'Admin:designation' %}">Designation</a>
+    <br>
+    <a href="{% url 'Admin:district' %}">District</a>
+    <br>
+    <a href="{% url 'Admin:place' %}">Place</a>
+    <br>
+    <a href="{% url 'Admin:state' %}">State</a>
+    <br>
+    <a href="{% url 'Admin:worktype' %}">Work Type</a>
+    {% if msg %}
+    <script>
+        alert('{{msg}}')
+        window.location = "{% url 'Admin:homepage' %}"
+    </script>
+    {% endif %}
+</body>
+</html>

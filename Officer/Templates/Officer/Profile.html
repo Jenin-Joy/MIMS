@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="post">
+        <table>
+            <tr>
+                <td colspan="2" align="center"><img src="{{officer.officer_photo.url}}" width="150" height="150" alt=""></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{officer.officer_name}}</td>
+            </tr>
+            <tr>
+                <td>Contact</td>
+                <td>{{officer.officer_contact}}</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{officer.officer_email}}</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>{{officer.officer_address}}</td>
+            </tr>
+            <tr>
+                <td>Date Of Birth</td>
+                <td>{{officer.officer_dob}}</td>
+            </tr>
+            <tr>
+                <td>Gender</td>
+                <td>{{officer.officer_gender}}</td>
+            </tr>
+            <tr>
+                <td>Designation</td>
+                <td>{{officer.designation.designation_name}}</td>
+            </tr>
+            <tr>
+                <td>Department</td>
+                <td>{{officer.department.department_name}}</td>
+            </tr>
+            <tr>
+                <td>State</td>
+                <td>{{officer.place.district.state.state_name}}</td>
+            </tr>
+            <tr>
+                <td>District</td>
+                <td>{{officer.place.district.district_name}}</td>
+            </tr>
+            <tr>
+                <td>Place</td>
+                <td>{{officer.place.place_name}}</td>
+            </tr>
+            <tr>
+                <td><a href="{% url 'Officer:editprofile' %}">Edit Profile</a></td>
+                <td><a href="{% url 'Officer:changepassword' %}">Change Password</a></td>
+            </tr>
+        </table>
+    </form>
+    {% if msg %}
+    <script>
+        alert("{{ msg }}");
+        window.location="{% url 'Officer:profile' %}";
+    </script>
+    {% endif %}
+</body>
+</html>

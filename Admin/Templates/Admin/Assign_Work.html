@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>Work Type</td>
+                <td>
+                    <select name="sel_worktype" id="">
+                        <option value="">...Select...</option>
+                        {% for i in worktype %}
+                        <option value="{{i.id}}">{{i.worktype_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><textarea name="txt_description" id="" cols="20" rows="5"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Assign"></td>
+            </tr>
+        </table>
+    </form>
+
+    <table cellpadding="10">
+        <tr>
+            <td>#</td>
+            <td>Work Type</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Officer</td>
+            <td>Status</td>
+        </tr>
+        {% for i in assign %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.worktype.worktype_name}}</td>
+            <td>{{i.assign_description}}</td>
+            <td>{{i.assign_date}}</td>
+            <td>{{i.officer.officer_name}}</td>
+            <td>
+                {% if i.assign_status == 0 %}
+                <span style="color: green;">Work Pending | <a href="{% url 'Admin:deleteassignwork' i.id %}">Delete</a></span>
+                {% elif i.assign_status == 1 %}
+                <span style="color: green;">Work Started</span>
+                {% elif i.assign_status == 2 %}
+                <span style="color: green;">Work Completed</span>
+                {% else %}
+                Error
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if msg %}
+    <script>
+        alert("{{msg}}")
+        window.location = "{% url 'Admin:approvedofficer' %}";
+    </script>
+    {% endif %}
+</body>
+</html>

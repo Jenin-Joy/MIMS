@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellpadding="10">
+        <tr>
+            <td>#</td>
+            <td>Work Type</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Start Date</td>
+            <td>End Date</td>
+            <td>Action</td>
+        </tr>
+        {% for i in assign %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.worktype.worktype_name}}</td>
+            <td>{{i.assign_description}}</td>
+            <td>{{i.assign_date}}</td>
+            <td>
+                {% if i.StartDate == None %}
+                <span style="color: red;">N/A</span>
+                {% else %}
+                {{i.StartDate}} 
+                {% endif %}
+            </td>
+            <td>
+                {% if i.EndDate == None %}
+                <span style="color: red;">N/A</span>
+                {% else %}
+                {{i.EndDate}} 
+                {% endif %}
+            </td>
+            <td>
+                {% if i.assign_status == 0 %}
+                <a href="{% url 'Officer:updatework' i.id 1 %}">Work Start</a>
+                {% elif i.assign_status == 1 %}
+                <a href="{% url 'Officer:updatework' i.id 2 %}">Work End</a>
+                {% elif i.assign_status == 2 %}
+                <span style="color: green;">Work Completed</span>
+                {% else %}
+                Error
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if msg %}
+    <script>
+        alert("{{msg}}")
+        window.location = "{% url 'Officer:viewworks' %}";
+    </script>
+    {% endif %}
+</body>
+</html>
