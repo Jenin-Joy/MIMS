@@ -11,7 +11,7 @@
     <a href="{% url 'Officer:viewadmin' %}">View Admin</a>
     <br>
     <a href="{% url 'Officer:viewworks' %}">View Works</a>
-    <br><a href="{% url 'Officer:logout' %}">Logout</a>
-
+    {% block content %}
+    {% endblock content %}
 </body>
 </html>

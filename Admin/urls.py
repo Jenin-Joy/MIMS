@@ -43,4 +43,6 @@ urlpatterns = [
 
     path('assignwork/<int:id>',views.assignwork,name="assignwork"),
     path('deleteassignwork/<int:id>',views.deleteassignwork,name="deleteassignwork"),
+
+    path('logout/',views.logout,name="logout"),
 ]

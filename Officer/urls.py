@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('viewworks/',views.viewworks,name="viewworks"),
     path('updatework/<int:id>/<int:status>',views.updatework,name="updatework"),
+
+    path('logout/',views.logout,name="logout"),
 ]

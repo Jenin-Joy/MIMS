@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from Guest.models import tbl_officer
 from Admin.models import *
 from Guest.models import tbl_chat,tbl_keys,tbl_assign
@@ -9,53 +9,68 @@ from cryptography.fernet import Fernet
 # Create your views here.
 
 def homepage(request):
-    return render(request, 'Officer/Homepage.html')
+    if 'ofid' in request.session:
+        return render(request, 'Officer/Homepage.html')
+    else:
+        return redirect("Guest:login")
 
 def profile(request):
-    officer = tbl_officer.objects.get(id=request.session["ofid"])
-    return render(request, 'Officer/Profile.html',{'officer':officer})
+    if 'ofid' in request.session:
+        officer = tbl_officer.objects.get(id=request.session["ofid"])
+        return render(request, 'Officer/Profile.html',{'officer':officer})
+    else:
+        return redirect("Guest:login")
 
 def editprofile(request):
-    officer = tbl_officer.objects.get(id=request.session["ofid"])
-    designation = tbl_designation.objects.all()
-    department = tbl_department.objects.all()
-    if request.method == "POST":
-        officer.officer_name = request.POST.get('txt_name')
-        officer.officer_contact = request.POST.get('txt_contact')
-        officer.officer_email = request.POST.get('txt_email')
-        officer.department = tbl_department.objects.get(id=request.POST.get('sel_department'))
-        officer.designation = tbl_designation.objects.get(id=request.POST.get('sel_designation'))
-        officer.save()
-        return render(request, 'Officer/Profile.html',{'msg':'Data Updated'})
+    if 'ofid' in request.session:
+        officer = tbl_officer.objects.get(id=request.session["ofid"])
+        designation = tbl_designation.objects.all()
+        department = tbl_department.objects.all()
+        if request.method == "POST":
+            officer.officer_name = request.POST.get('txt_name')
+            officer.officer_contact = request.POST.get('txt_contact')
+            officer.officer_email = request.POST.get('txt_email')
+            officer.department = tbl_department.objects.get(id=request.POST.get('sel_department'))
+            officer.designation = tbl_designation.objects.get(id=request.POST.get('sel_designation'))
+            officer.save()
+            return render(request, 'Officer/Profile.html',{'msg':'Data Updated'})
+        else:
+            return render(request, 'Officer/EditProfile.html',{'officer':officer,"designation":designation,'department':department})
     else:
-        return render(request, 'Officer/EditProfile.html',{'officer':officer,"designation":designation,'department':department})
+        return redirect("Guest:login")
 
 def changepassword(request):
-    officer = tbl_officer.objects.get(id=request.session["ofid"])
-    if request.method == "POST":
-        if officer.officer_password == request.POST.get("txt_old_password"):
-            if request.POST.get("txt_new_password") == request.POST.get("txt_con_password"):
-                officer.officer_password = request.POST.get("txt_new_password")
-                officer.save()
-                return render(request, 'Officer/Profile.html',{'msg':'Password Changed'})
+    if 'ofid' in request.session:
+        officer = tbl_officer.objects.get(id=request.session["ofid"])
+        if request.method == "POST":
+            if officer.officer_password == request.POST.get("txt_old_password"):
+                if request.POST.get("txt_new_password") == request.POST.get("txt_con_password"):
+                    officer.officer_password = request.POST.get("txt_new_password")
+                    officer.save()
+                    return render(request, 'Officer/Profile.html',{'msg':'Password Changed'})
+                else:
+                    return render(request, 'Officer/ChangePassword.html',{'msg':'Confirm Passwords do not match'})
             else:
-                return render(request, 'Officer/ChangePassword.html',{'msg':'Confirm Passwords do not match'})
+                return render(request, 'Officer/ChangePassword.html',{'msg':'Old Password is incorrect'})
         else:
-            return render(request, 'Officer/ChangePassword.html',{'msg':'Old Password is incorrect'})
+            return render(request, 'Officer/ChangePassword.html')
     else:
-        return render(request, 'Officer/ChangePassword.html')
+        return redirect("Guest:login")
 
 def viewadmin(request):
-    admin = tbl_admin.objects.all()
-    return render(request, 'Officer/View_Admin.html',{'admin':admin})
+    if 'ofid' in request.session:
+        admin = tbl_admin.objects.all()
+        return render(request, 'Officer/View_Admin.html',{'admin':admin})
+    else:
+        return redirect("Guest:login")
 
 def chatpage(request,id):
     admin  = tbl_admin.objects.get(id=id)
     connection = tbl_keys.objects.filter(admin=admin,officer=request.session["ofid"]).count()
     if connection == 0:
-        key = random.randint(111111,999999)
-        tbl_keys.objects.create(key_name=key,admin=tbl_admin.objects.get(id=admin.id),officer=tbl_officer.objects.get(id=request.session["ofid"]))
-        return render(request,"Admin/Chat.html",{"user":admin})
+        key = Fernet.generate_key()
+        tbl_keys.objects.create(key_name=key.decode(),admin=tbl_admin.objects.get(id=admin.id),officer=tbl_officer.objects.get(id=request.session["ofid"]))
+        return render(request,"Officer/Chat.html",{"user":admin})
     else:
         return render(request,"Officer/Chat.html",{"user":admin})
 
@@ -74,7 +89,7 @@ def ajaxchat(request):
 def ajaxchatview(request):
     tid = request.GET.get("tid")
     officer = tbl_officer.objects.get(id=request.session["ofid"])
-    key = tbl_keys.objects.get(admin=request.session["aid"],officer=tid)
+    key = tbl_keys.objects.get(admin=tid,officer=officer)
     fernet = Fernet(key.key_name.encode())
     chat_data = tbl_chat.objects.filter((Q(officer_from=officer) | Q(officer_to=officer)) & (Q(admin_from=tid) | Q(admin_to=tid))).order_by('chat_time')
     for i in chat_data:
@@ -108,3 +123,6 @@ def updatework(request, id, status):
     assign.save()
     return render(request,"Officer/View_Works.html",{"msg":msg})
     
+def logout(request):
+    del request.session["ofid"]
+    return redirect("Guest:login")

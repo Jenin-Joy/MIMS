@@ -1,3 +1,5 @@
+{% extends 'Admin/Header.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +38,8 @@
             <td>Work Type</td>
             <td>Description</td>
             <td>Date</td>
+            <td>Start Date</td>
+            <td>End Date</td>
             <td>Officer</td>
             <td>Status</td>
         </tr>
@@ -45,6 +49,20 @@
             <td>{{i.worktype.worktype_name}}</td>
             <td>{{i.assign_description}}</td>
             <td>{{i.assign_date}}</td>
+            <td>
+                {% if i.StartDate == None %}
+                <span style="color: red;">N/A</span>
+                {% else %}
+                {{i.StartDate}} 
+                {% endif %}
+            </td>
+            <td>
+                {% if i.EndDate == None %}
+                <span style="color: red;">N/A</span>
+                {% else %}
+                {{i.EndDate}} 
+                {% endif %}
+            </td>
             <td>{{i.officer.officer_name}}</td>
             <td>
                 {% if i.assign_status == 0 %}
@@ -68,3 +86,4 @@
     {% endif %}
 </body>
 </html>
+{% endblock content %}

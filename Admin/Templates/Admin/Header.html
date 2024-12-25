@@ -6,6 +6,8 @@
     <title>Document</title>
 </head>
 <body>
+    <a href="{% url 'Admin:homepage' %}">Home</a>
+    <br>
     <a href="{% url 'Admin:approvedofficer' %}">Approved Officer</a>
     <br>
     <a href="{% url 'Admin:rejectedofficer' %}">Rejected Officer</a>
@@ -23,13 +25,7 @@
     <a href="{% url 'Admin:state' %}">State</a>
     <br>
     <a href="{% url 'Admin:worktype' %}">Work Type</a>
-    <br>
-    <a href="{% url 'Admin:logout' %}">Logout</a>
-    {% if msg %}
-    <script>
-        alert('{{msg}}')
-        window.location = "{% url 'Admin:homepage' %}"
-    </script>
-    {% endif %}
+    {% block content %}
+    {% endblock content %}
 </body>
 </html>

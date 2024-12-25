@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from Admin.models import *
 from Guest.models import tbl_officer,tbl_chat,tbl_keys,tbl_assign
 from django.db.models import Q
@@ -8,27 +8,40 @@ from cryptography.fernet import Fernet
 # Create your views here.
 
 def homepage(request):
-    return render(request, 'Admin/homepage.html')
+    if 'aid' in request.session:
+        return render(request, 'Admin/homepage.html')
+    else:
+        return redirect("Guest:login")
+
+def logout(request):
+    del request.session["aid"]
+    return redirect("Guest:login")
 
 def adminreg(request):
-    admin = tbl_admin.objects.all()
-    if request.method == "POST":
-        tbl_admin.objects.create(admin_name=request.POST.get('txt_name'), admin_email=request.POST.get('txt_email'), admin_password=request.POST.get('txt_password'))
-        return render(request,"Admin/Admin_Reg.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        admin = tbl_admin.objects.all()
+        if request.method == "POST":
+            tbl_admin.objects.create(admin_name=request.POST.get('txt_name'), admin_email=request.POST.get('txt_email'), admin_password=request.POST.get('txt_password'))
+            return render(request,"Admin/Admin_Reg.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/Admin_Reg.html",{"admin":admin})
     else:
-        return render(request,"Admin/Admin_Reg.html",{"admin":admin})
+        return redirect("Guest:login")
 
 def deleteadmin(request,id):
     tbl_admin.objects.get(id=id).delete()
     return render(request,"Admin/Admin_Reg.html",{"msg":"Data Deleted"})
 
 def department(request):
-    department = tbl_department.objects.all()
-    if request.method == "POST":
-        tbl_department.objects.create(department_name=request.POST.get('txt_name'))
-        return render(request,"Admin/Department.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        department = tbl_department.objects.all()
+        if request.method == "POST":
+            tbl_department.objects.create(department_name=request.POST.get('txt_name'))
+            return render(request,"Admin/Department.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/Department.html",{"department":department})
     else:
-        return render(request,"Admin/Department.html",{"department":department})
+        return redirect("Guest:login")
 
 def deletedepartment(request,id):
     tbl_department.objects.get(id=id).delete()
@@ -44,12 +57,15 @@ def editdepartment(request,id):
         return render(request,"Admin/Department.html",{"editdepartment":department})
 
 def designation(request):
-    designation = tbl_designation.objects.all()
-    if request.method == "POST":
-        tbl_designation.objects.create(designation_name=request.POST.get('txt_name'))
-        return render(request,"Admin/Designation.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        designation = tbl_designation.objects.all()
+        if request.method == "POST":
+            tbl_designation.objects.create(designation_name=request.POST.get('txt_name'))
+            return render(request,"Admin/Designation.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/Designation.html",{"designation":designation})
     else:
-        return render(request,"Admin/Designation.html",{"designation":designation})
+        return redirect("Guest:login")
 
 def deletedesignation(request,id):
     tbl_designation.objects.get(id=id).delete()
@@ -65,12 +81,15 @@ def editdesignation(request,id):
         return render(request,"Admin/Designation.html",{"editdesignation":designation})
 
 def state(request):
-    state = tbl_state.objects.all()
-    if request.method == "POST":
-        tbl_state.objects.create(state_name=request.POST.get('txt_name'))
-        return render(request,"Admin/State.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        state = tbl_state.objects.all()
+        if request.method == "POST":
+            tbl_state.objects.create(state_name=request.POST.get('txt_name'))
+            return render(request,"Admin/State.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/State.html",{"state":state})
     else:
-        return render(request,"Admin/State.html",{"state":state})
+        return redirect("Guest:login")
 
 def deletestate(request,id):
     tbl_state.objects.get(id=id).delete()
@@ -86,12 +105,15 @@ def editstate(request,id):
         return render(request,"Admin/State.html",{"editstate":state})
 
 def worktype(request):
-    worktype = tbl_worktype.objects.all()
-    if request.method == "POST":
-        tbl_worktype.objects.create(worktype_name=request.POST.get('txt_name'))
-        return render(request,"Admin/Work_Type.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        worktype = tbl_worktype.objects.all()
+        if request.method == "POST":
+            tbl_worktype.objects.create(worktype_name=request.POST.get('txt_name'))
+            return render(request,"Admin/Work_Type.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/Work_Type.html",{"worktype":worktype})
     else:
-        return render(request,"Admin/Work_Type.html",{"worktype":worktype})
+        return redirect("Guest:login")
 
 def deleteworktype(request,id):
     tbl_worktype.objects.get(id=id).delete()
@@ -107,13 +129,16 @@ def editworktype(request,id):
         return render(request,"Admin/Work_Type.html",{"editworktype":worktype})
 
 def district(request):
-    state = tbl_state.objects.all()
-    district = tbl_district.objects.all()
-    if request.method == "POST":
-        tbl_district.objects.create(district_name=request.POST.get('txt_name'), state=tbl_state.objects.get(id=request.POST.get('sel_state')))
-        return render(request,"Admin/District.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        state = tbl_state.objects.all()
+        district = tbl_district.objects.all()
+        if request.method == "POST":
+            tbl_district.objects.create(district_name=request.POST.get('txt_name'), state=tbl_state.objects.get(id=request.POST.get('sel_state')))
+            return render(request,"Admin/District.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/District.html",{"district":district,"state":state})
     else:
-        return render(request,"Admin/District.html",{"district":district,"state":state})
+        return redirect("Guest:login")
 
 def deletedistrict(request,id):
     tbl_district.objects.get(id=id).delete()
@@ -131,13 +156,16 @@ def editdistrict(request,id):
         return render(request,"Admin/District.html",{"editdistrict":district,"state":state})
 
 def place(request):
-    state = tbl_state.objects.all()
-    place = tbl_place.objects.all()
-    if request.method == "POST":
-        tbl_place.objects.create(place_name=request.POST.get('txt_place'), district=tbl_district.objects.get(id=request.POST.get('sel_district')))
-        return render(request,"Admin/Place.html",{"msg":"Data Inserted"})
+    if 'aid' in request.session:
+        state = tbl_state.objects.all()
+        place = tbl_place.objects.all()
+        if request.method == "POST":
+            tbl_place.objects.create(place_name=request.POST.get('txt_place'), district=tbl_district.objects.get(id=request.POST.get('sel_district')))
+            return render(request,"Admin/Place.html",{"msg":"Data Inserted"})
+        else:
+            return render(request,"Admin/Place.html",{"place":place,"state":state})
     else:
-        return render(request,"Admin/Place.html",{"place":place,"state":state})
+        return redirect("Guest:login")
 
 def deleteplace(request,id):
     tbl_place.objects.get(id=id).delete()
@@ -148,8 +176,11 @@ def ajaxdistrict(request):
     return render(request,"Admin/AjaxDistrict.html",{"district":district})
 
 def newofficer(request):
-    officer = tbl_officer.objects.filter(officer_status=0)
-    return render(request,"Admin/New_Officers.html",{"officer":officer})
+    if 'aid' in request.session:
+        officer = tbl_officer.objects.filter(officer_status=0)
+        return render(request,"Admin/New_Officers.html",{"officer":officer})
+    else:
+        return redirect("Guest:login")
 
 def verifyofficer(request,id,status):
     officer = tbl_officer.objects.get(id=id)
@@ -163,12 +194,18 @@ def verifyofficer(request,id,status):
     return render(request,"Admin/homepage.html",{"msg":msg})
 
 def approvedofficer(request):
-    officer = tbl_officer.objects.filter(officer_status=1)
-    return render(request,"Admin/Approved_Officer.html",{"officer":officer})
+    if 'aid' in request.session:
+        officer = tbl_officer.objects.filter(officer_status=1)
+        return render(request,"Admin/Approved_Officer.html",{"officer":officer})
+    else:
+        return redirect("Guest:login")
 
 def rejectedofficer(request):
-    officer = tbl_officer.objects.filter(officer_status=2)
-    return render(request,"Admin/Rejected_Officer.html",{"officer":officer})
+    if 'aid' in request.session:
+        officer = tbl_officer.objects.filter(officer_status=2)
+        return render(request,"Admin/Rejected_Officer.html",{"officer":officer})
+    else:
+        return redirect("Guest:login")
 
 def chatpage(request,id):
     user  = tbl_officer.objects.get(id=id)
